@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("maven-publish")
 }
 
 android {
@@ -59,4 +60,19 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+//            create("release", MavenPublication::class) {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.zeeeeej"
+                artifactId = "common" // 与lib module名称一样
+                version = "1.0.0"
+
+            }
+        }
+    }
 }
