@@ -14,9 +14,18 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
-        mavenCentral()
-        maven("https://jitpack.io")
+        google() {
+            content { excludeGroupByRegex("com\\.github.zeeeeej.*") }
+        }
+        mavenCentral() {
+            content { excludeGroupByRegex("com\\.github.zeeeeej.*") }
+        }
+
+        maven("https://jitpack.io") {
+            content {
+                includeGroup("com.github.zeeeeej") // https://docs.jitpack.io/
+            }
+        }
     }
 }
 
