@@ -1,8 +1,13 @@
+import org.jetbrains.kotlin.cli.jvm.main
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("maven-publish")
 }
+
+group = "com.github.zeeeeej"
+version = "0.0.6"
 
 android {
     namespace = "com.zeeeeej.compose.common"
@@ -39,6 +44,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.13"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -70,12 +76,39 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.zeeeeej"
                 artifactId = "common" // 与lib module名称一样
-                version = "1.0.0"
-
-            }
-            repositories {
-                mavenLocal()
+                version = "0.0.6"
             }
         }
     }
+}
+
+val sourceFiles = android.sourceSets.getByName("main").java.getSourceFiles()
+
+tasks.register<Javadoc>("withJavadoc") {
+    isFailOnError = false
+    dependsOn(tasks.named("compileDebugSources"), tasks.named("compileReleaseSources"))
+
+    // add Android runtime classpath
+    android.bootClasspath.forEach { classpath += project.fileTree(it) }
+
+    // add classpath for all dependencies
+    android.libraryVariants.forEach { variant ->
+        variant.javaCompileProvider.get().classpath.files.forEach { file ->
+            classpath += project.fileTree(file)
+        }
+    }
+
+    source = sourceFiles
+}
+
+tasks.register<Jar>("withJavadocJar") {
+    archiveClassifier.set("javadoc")
+    dependsOn(tasks.named("withJavadoc"))
+    val destination = tasks.named<Javadoc>("withJavadoc").get().destinationDir
+    from(destination)
+}
+
+tasks.register<Jar>("withSourcesJar") {
+    archiveClassifier.set("sources")
+    from(sourceFiles)
 }
