@@ -4,10 +4,11 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("maven-publish")
+    alias(libs.plugins.compose.compiler)
 }
 
 group = "com.github.zeeeeej"
-version = "0.0.6"
+version = "0.0.7"
 
 android {
     namespace = "com.zeeeeej.compose.common"
@@ -71,12 +72,11 @@ dependencies {
 afterEvaluate {
     publishing {
         publications {
-//            create("release", MavenPublication::class) {
             create<MavenPublication>("release") {
                 from(components["release"])
                 groupId = "com.github.zeeeeej"
-                artifactId = "common" // 与lib module名称一样
-                version = "0.0.6"
+                artifactId = "common"
+                version = "0.0.7"
             }
         }
     }
